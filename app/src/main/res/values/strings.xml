@@ -4,4 +4,8 @@
     <string name="Text">A Todo List \nA Done List \nPlus An Alaram Clock \nAll-In-One!</string>
     <string name="Title">ToDoneList</string>
     <string name="title_activity_navigation_screen">NavigationScreen</string>
+    <string name="ListButton">To Do List</string>
+    <string name="DoneText">Done List</string>
+    <string name="alarmButton">Alarms</string>
+    <string name="settingsButton">Settings</string>
 </resources>

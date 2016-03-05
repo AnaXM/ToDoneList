@@ -17,7 +17,8 @@ import android.view.MenuItem;
 
 public class MainActivity extends AppCompatActivity {
 
-    protected void getStartedClick(View view){
+
+    public void getStartedClick(View view){
         Intent newIntent = new Intent(this, NavigationScreen.class);
         startActivity(newIntent);
     }

@@ -39,5 +39,7 @@
         android:layout_marginTop="61dp"
         android:layout_below="@+id/textView2"
         android:layout_centerHorizontal="true"
-        android:text = "Let's Get Started"/>
+        android:text = "Let's Get Started"
+        android:onClick="getStartedClick" />
+
 </RelativeLayout>
