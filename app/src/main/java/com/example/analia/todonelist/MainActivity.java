@@ -4,6 +4,7 @@
 
 package com.example.analia.todonelist;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -15,6 +16,12 @@ import android.view.MenuItem;
 
 
 public class MainActivity extends AppCompatActivity {
+
+    protected void getStartedClick(View view){
+        Intent newIntent = new Intent(this, NavigationScreen.class);
+        startActivity(newIntent);
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
