@@ -1,3 +1,7 @@
+/**
+ * Very First Screen When App is Opened
+ */
+
 package com.example.analia.todonelist;
 
 import android.os.Bundle;
