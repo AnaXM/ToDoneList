@@ -12,6 +12,8 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 
+import java.util.ArrayList;
+
 import static android.widget.RelativeLayout.ALIGN_PARENT_LEFT;
 import static android.widget.RelativeLayout.ALIGN_PARENT_TOP;
 
@@ -55,9 +57,11 @@ public class DoneList extends AppCompatActivity {
         int px = (int) TypedValue.applyDimension(
                 TypedValue.COMPLEX_UNIT_DIP, 50, r.getDisplayMetrics());
 
+        //Bundle extra = getIntent().getExtras();
+
         layout = addBackButton(layout, px);
 
-        ListView doneItems = new ListView(null); //Need to change null into something else
+        //ListView doneItems = new ListView(null); //Need to change null into something else
         // Need to look into getting infor from ToDoList Activity to display
         // The entries completed
 

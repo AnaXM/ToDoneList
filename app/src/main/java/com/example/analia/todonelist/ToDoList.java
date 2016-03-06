@@ -2,6 +2,7 @@ package com.example.analia.todonelist;
 
 import android.content.Context;
 import android.content.ContextWrapper;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.renderscript.ScriptGroup;
@@ -12,6 +13,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.InputType;
 import android.util.TypedValue;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -32,6 +34,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
+import static android.view.ViewGroup.PERSISTENT_ALL_CACHES;
 import static android.widget.RelativeLayout.ALIGN_PARENT_LEFT;
 import static android.widget.RelativeLayout.ALIGN_PARENT_RIGHT;
 import static android.widget.RelativeLayout.ALIGN_PARENT_TOP;
@@ -46,13 +49,14 @@ public class ToDoList extends AppCompatActivity {
     protected static TableLayout table;
     protected String input = "";
     protected int id = 10;
+    private static final String TAG = "Message";
 
     /*
     ArrayList that holds all of the entries as strings
      */
-    protected ArrayList<String> doneEntries = new ArrayList<String>();
+    protected static ArrayList<String> doneEntries = new ArrayList<String>();
 
-    private ArrayList<String> allEntries = new ArrayList<String>();
+    protected static ArrayList<String> allEntries = new ArrayList<String>();
 
     /*
     Getter function for entries
@@ -102,6 +106,8 @@ public class ToDoList extends AppCompatActivity {
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Intent intent = new Intent(ToDoList.this, DoneList.class);
+                intent.putExtra("ToDoList", allEntries);
                 finish();
             }
         });
@@ -112,6 +118,7 @@ public class ToDoList extends AppCompatActivity {
         /* Creating Edit Text Field*/
         entry = new EditText(ToDoList.this);
         entry.setId(9);
+        //entry.setText("Add Entry Here");
         entry.setInputType(InputType.TYPE_CLASS_TEXT);
 
         table = new TableLayout(this);
@@ -137,9 +144,12 @@ public class ToDoList extends AppCompatActivity {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    Log.i(TAG, "NOTE: I'm in the EditView Method");
                     input = v.getText().toString();
                     entry.setText(null);
                     allEntries.add(input);
+                    String message = "NOTE: Entries Size: " + allEntries.size() + "";
+                    Log.i(TAG, message);
 
                     InputMethodManager imm = (InputMethodManager) getSystemService(ToDoList.INPUT_METHOD_SERVICE);
                     imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
@@ -147,26 +157,37 @@ public class ToDoList extends AppCompatActivity {
                     //TableRow row = new TableRow(ToDoList.this);
                     final CheckBox newItem = new CheckBox(ToDoList.this);
                     newItem.setText(input); //Not really necessary but meh
+                    //newItem.setClickable(true);
+                    newItem.setChecked(false);
+                    newItem.isClickable();
+
+                    newItem.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Log.i(TAG, "NOTE: I've been clicked!");
+                        }
+                    });
+
 
                     newItem.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                         @Override
                         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                            doneEntries.add(newItem.getText().toString());
-                            allEntries.remove(allEntries.indexOf(newItem));
-                            table.removeAllViews();
-                            table = updateTable(table);
-                            setContentView(layout); //Need to update layout now?
+                            Log.i(TAG, "NOTE: I'm in the method!"); //Just messages to tell me where code is
+                            if(buttonView.isChecked()) {
+                                Log.i(TAG, "NOTE: I'M CHECKED!"); //Just message
+                                doneEntries.add(newItem.getText().toString());
+                                allEntries.remove(newItem.getText().toString());
+                                table.removeAllViews();
+                                table = updateTable(table);
+                                layout.addView(table);
+                                setContentView(layout); //Need to update layout now?
+                            }
                         }
-                    });
+                    }); //End of CheckBox onCheckedChanged method
 
-                    /*TableRow.LayoutParams rowDetails = new TableRow.LayoutParams(
-                            TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.WRAP_CONTENT);
-
-                    row.addView(newItem, rowDetails);
-                    table.addView(row);*/
-                    //table = new TableLayout(ToDoList.this); //clearing table
                     table.removeAllViews();
                     table = updateTable(table);
+                    setContentView(layout);
 
                     return true;
                 }
