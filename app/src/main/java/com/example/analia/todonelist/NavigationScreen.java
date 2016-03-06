@@ -128,7 +128,6 @@ public class NavigationScreen extends AppCompatActivity {
             }
         });
 
-
         setContentView(layout);
 
     }
