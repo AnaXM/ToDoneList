@@ -27,6 +27,7 @@ import android.widget.TextView;
 
 import org.w3c.dom.Text;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -44,6 +45,20 @@ public class ToDoList extends AppCompatActivity {
     protected static TableLayout table;
     protected String input = "";
     protected int id = 10;
+
+    /*
+    ArrayList that holds all of the entries as strings
+     */
+    protected ArrayList<String> entries = new ArrayList<String>();
+
+    /*
+    Getter function for entries
+    Just putting her just in case of how startActivityResult works
+     */
+    public ArrayList<String> getEntries(){
+        return entries;
+    }
+
 
     /**
      * Creating back button, addEntry button
@@ -81,10 +96,11 @@ public class ToDoList extends AppCompatActivity {
 
         table = new TableLayout(this);
         final RelativeLayout.LayoutParams tableDetails = new RelativeLayout.LayoutParams(
-                RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+                RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
         tableDetails.setMargins(10, 10, 10, 0);
-        tableDetails.addRule(CENTER_VERTICAL);
-        tableDetails.addRule(CENTER_HORIZONTAL);
+        tableDetails.addRule(ALIGN_PARENT_LEFT);
+        //tableDetails.addRule(CENTER_VERTICAL);
+        //tableDetails.addRule(CENTER_HORIZONTAL);
         tableDetails.addRule(RelativeLayout.BELOW, entry.getId());
 
         /* Adding Edit Text Field */
@@ -93,6 +109,8 @@ public class ToDoList extends AppCompatActivity {
         entryDetails.addRule(ALIGN_PARENT_LEFT);
         entryDetails.addRule(RelativeLayout.BELOW, backButton.getId());
         entryDetails.setMargins(25, 25, 20, 0);
+        layout.addView(entry, entryDetails);
+        layout.addView(table, tableDetails); //Considering add table earlier
 
         entry.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -100,6 +118,7 @@ public class ToDoList extends AppCompatActivity {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
                     input = v.getText().toString();
                     entry.setText(null);
+                    entries.add(input); //Adding to entries list
 
                     InputMethodManager imm = (InputMethodManager) getSystemService(ToDoList.INPUT_METHOD_SERVICE);
                     imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
@@ -107,18 +126,19 @@ public class ToDoList extends AppCompatActivity {
                     TableRow row = new TableRow(ToDoList.this);
                     CheckBox newItem = new CheckBox(ToDoList.this);
                     newItem.setText(input);
-                    row.addView(newItem);
+
+                    TableRow.LayoutParams rowDetails = new TableRow.LayoutParams(
+                            TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.WRAP_CONTENT);
+
+                    row.addView(newItem, rowDetails);
                     table.addView(row);
 
-                    layout.addView(table, tableDetails);
-
+                    //layout.addView(table, tableDetails); //Considering add table earlier
                     return true;
                 }
                 return false;
             }
         });
-
-        layout.addView(entry, entryDetails);
 
         /*table = new TableLayout(this);
         final RelativeLayout.LayoutParams tableDetails = new RelativeLayout.LayoutParams(
