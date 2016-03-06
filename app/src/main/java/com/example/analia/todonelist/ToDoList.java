@@ -18,6 +18,7 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.content.res.Resources;
@@ -49,16 +50,35 @@ public class ToDoList extends AppCompatActivity {
     /*
     ArrayList that holds all of the entries as strings
      */
-    protected ArrayList<String> entries = new ArrayList<String>();
+    protected ArrayList<String> doneEntries = new ArrayList<String>();
+
+    private ArrayList<String> allEntries = new ArrayList<String>();
 
     /*
     Getter function for entries
     Just putting her just in case of how startActivityResult works
      */
-    public ArrayList<String> getEntries(){
-        return entries;
+    public ArrayList<String> getDoneEntries(){
+        return doneEntries;
     }
 
+    /**
+     * Updates tableLayout
+     * @param t current table in use
+     * @return Updated Version of inputted table
+     */
+    private TableLayout updateTable(TableLayout t){
+        TableRow.LayoutParams rowDetails = new TableRow.LayoutParams(
+                TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.WRAP_CONTENT);
+        for(String s : allEntries){
+            TableRow row = new TableRow(ToDoList.this);
+            CheckBox box = new CheckBox(ToDoList.this);
+            box.setText(s);
+            row.addView(box, rowDetails);
+            t.addView(row);
+        }
+        return t;
+    }
 
     /**
      * Creating back button, addEntry button
@@ -110,7 +130,8 @@ public class ToDoList extends AppCompatActivity {
         entryDetails.addRule(RelativeLayout.BELOW, backButton.getId());
         entryDetails.setMargins(25, 25, 20, 0);
         layout.addView(entry, entryDetails);
-        layout.addView(table, tableDetails); //Considering add table earlier
+
+        layout.addView(table, tableDetails); // Must be here
 
         entry.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -118,38 +139,40 @@ public class ToDoList extends AppCompatActivity {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
                     input = v.getText().toString();
                     entry.setText(null);
-                    entries.add(input); //Adding to entries list
+                    allEntries.add(input);
 
                     InputMethodManager imm = (InputMethodManager) getSystemService(ToDoList.INPUT_METHOD_SERVICE);
                     imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
 
-                    TableRow row = new TableRow(ToDoList.this);
-                    CheckBox newItem = new CheckBox(ToDoList.this);
-                    newItem.setText(input);
+                    //TableRow row = new TableRow(ToDoList.this);
+                    final CheckBox newItem = new CheckBox(ToDoList.this);
+                    newItem.setText(input); //Not really necessary but meh
 
-                    TableRow.LayoutParams rowDetails = new TableRow.LayoutParams(
+                    newItem.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                        @Override
+                        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                            doneEntries.add(newItem.getText().toString());
+                            allEntries.remove(allEntries.indexOf(newItem));
+                            table.removeAllViews();
+                            table = updateTable(table);
+                            setContentView(layout); //Need to update layout now?
+                        }
+                    });
+
+                    /*TableRow.LayoutParams rowDetails = new TableRow.LayoutParams(
                             TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.WRAP_CONTENT);
 
                     row.addView(newItem, rowDetails);
-                    table.addView(row);
+                    table.addView(row);*/
+                    //table = new TableLayout(ToDoList.this); //clearing table
+                    table.removeAllViews();
+                    table = updateTable(table);
 
-                    //layout.addView(table, tableDetails); //Considering add table earlier
                     return true;
                 }
                 return false;
-            }
-        });
-
-        /*table = new TableLayout(this);
-        final RelativeLayout.LayoutParams tableDetails = new RelativeLayout.LayoutParams(
-                RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-        tableDetails.setMargins(10, 10, 10, 0);
-        tableDetails.addRule(CENTER_VERTICAL);
-        tableDetails.addRule(CENTER_HORIZONTAL);
-        tableDetails.addRule(RelativeLayout.BELOW, entry.getId());*/
-
-        //table.setBackgroundColor(Color.RED);
-        //layout.addView(table, tableDetails); //Just an empty table
+            }// End of onEditorAction
+        });//End of setOnEditorActionListener
 
         /* Adding Plus Button */
         /*Button addEntry = new Button(this);
@@ -179,7 +202,7 @@ public class ToDoList extends AppCompatActivity {
         layout.addView(dateDisplay, d_display);*/
 
         return layout;
-    }
+    } //End of AddButtons
 
     private String monthToString(int month){
         String[] months = {"January", "February", "March", "April", "May", "June", "July", "August",
@@ -216,17 +239,6 @@ public class ToDoList extends AppCompatActivity {
                 TypedValue.COMPLEX_UNIT_DIP, 50, r.getDisplayMetrics());
 
         layout = addButtons(layout, px);
-
-        /*String date = getDateAsString();
-        TextView dateDisplay = new TextView(null);
-        dateDisplay.setText(date);
-
-        RelativeLayout.LayoutParams d_display = new RelativeLayout.LayoutParams(
-                RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-        d_display.addRule(RelativeLayout.ALIGN_PARENT_TOP);
-        d_display.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-        d_display.setMargins(0, 25, 25, 0);
-        layout.addView(dateDisplay, d_display);*/
 
         setContentView(layout);
         /*setContentView(R.layout.activity_to_do_list);
