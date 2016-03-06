@@ -74,4 +74,5 @@
     <string name="AddEntry">+</string>
     <string name="AskNotifs">When Do You Want Notifications?</string>
     <string name="Notifs">When Do You Want Notifications?</string>
+    <string name="DoneListTempText">- Participated in BrickHacks\n -Learned more about Android Studio</string>
 </resources>
