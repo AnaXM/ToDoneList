@@ -9,6 +9,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.TypedValue;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
 
 import static android.widget.RelativeLayout.ALIGN_PARENT_LEFT;
@@ -55,6 +56,13 @@ public class DoneList extends AppCompatActivity {
                 TypedValue.COMPLEX_UNIT_DIP, 50, r.getDisplayMetrics());
 
         layout = addBackButton(layout, px);
+
+        ListView doneItems = new ListView(null); //Need to change null into something else
+        // Need to look into getting infor from ToDoList Activity to display
+        // The entries completed
+
+
+
         setContentView(layout);
         /*Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);*/

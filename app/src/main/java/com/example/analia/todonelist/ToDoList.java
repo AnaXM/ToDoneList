@@ -1,15 +1,28 @@
 package com.example.analia.todonelist;
 
+import android.content.Context;
+import android.content.ContextWrapper;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.renderscript.ScriptGroup;
+import android.speech.RecognitionListener;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.InputType;
 import android.util.TypedValue;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.content.res.Resources;
+import android.widget.TableLayout;
+import android.widget.TableRow;
 import android.widget.TextView;
 
 import org.w3c.dom.Text;
@@ -21,19 +34,24 @@ import static android.widget.RelativeLayout.ALIGN_PARENT_LEFT;
 import static android.widget.RelativeLayout.ALIGN_PARENT_RIGHT;
 import static android.widget.RelativeLayout.ALIGN_PARENT_TOP;
 import static android.widget.RelativeLayout.CENTER_HORIZONTAL;
+import static android.widget.RelativeLayout.CENTER_VERTICAL;
 import static android.widget.RelativeLayout.RIGHT_OF;
 
 
 public class ToDoList extends AppCompatActivity {
     //private Button backButton = new Button(this);
+    protected EditText entry;
+    protected static TableLayout table;
+    protected String input = "";
+    protected int id = 10;
 
     /**
-     * Creating a back button
+     * Creating back button, addEntry button
      * @param px pixel width of button dependent on device screen size
      */
-    public RelativeLayout addButtons(RelativeLayout layout, int px){
+    public RelativeLayout addButtons(final RelativeLayout layout, int px){
         /* Creating the back button */
-        Button backButton = new Button(this);
+        final Button backButton = new Button(this);
         backButton.setText(R.string.BackButton);
 
         //Ignore red squigglies
@@ -56,31 +74,89 @@ public class ToDoList extends AppCompatActivity {
         backButton.setWidth(px);
         layout.addView(backButton, b_buttonDetails);
 
+        /* Creating Edit Text Field*/
+        entry = new EditText(ToDoList.this);
+        entry.setId(9);
+        entry.setInputType(InputType.TYPE_CLASS_TEXT);
+
+        table = new TableLayout(this);
+        final RelativeLayout.LayoutParams tableDetails = new RelativeLayout.LayoutParams(
+                RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+        tableDetails.setMargins(10, 10, 10, 0);
+        tableDetails.addRule(CENTER_VERTICAL);
+        tableDetails.addRule(CENTER_HORIZONTAL);
+        tableDetails.addRule(RelativeLayout.BELOW, entry.getId());
+
+        /* Adding Edit Text Field */
+        RelativeLayout.LayoutParams entryDetails = new RelativeLayout.LayoutParams(
+                RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+        entryDetails.addRule(ALIGN_PARENT_LEFT);
+        entryDetails.addRule(RelativeLayout.BELOW, backButton.getId());
+        entryDetails.setMargins(25, 25, 20, 0);
+
+        entry.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    input = v.getText().toString();
+                    entry.setText(null);
+
+                    InputMethodManager imm = (InputMethodManager) getSystemService(ToDoList.INPUT_METHOD_SERVICE);
+                    imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
+
+                    TableRow row = new TableRow(ToDoList.this);
+                    CheckBox newItem = new CheckBox(ToDoList.this);
+                    newItem.setText(input);
+                    row.addView(newItem);
+                    table.addView(row);
+
+                    layout.addView(table, tableDetails);
+
+                    return true;
+                }
+                return false;
+            }
+        });
+
+        layout.addView(entry, entryDetails);
+
+        /*table = new TableLayout(this);
+        final RelativeLayout.LayoutParams tableDetails = new RelativeLayout.LayoutParams(
+                RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+        tableDetails.setMargins(10, 10, 10, 0);
+        tableDetails.addRule(CENTER_VERTICAL);
+        tableDetails.addRule(CENTER_HORIZONTAL);
+        tableDetails.addRule(RelativeLayout.BELOW, entry.getId());*/
+
+        //table.setBackgroundColor(Color.RED);
+        //layout.addView(table, tableDetails); //Just an empty table
+
         /* Adding Plus Button */
-        Button addEntry = new Button(this);
+        /*Button addEntry = new Button(this);
         addEntry.setText(R.string.AddEntry);
         addEntry.setTextSize(20);
 
-        RelativeLayout.LayoutParams entryDetails = new RelativeLayout.LayoutParams(
+        RelativeLayout.LayoutParams addEntryDetails = new RelativeLayout.LayoutParams(
                 RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-        //entryDetails.addRule(RelativeLayout.ALIGN_PARENT_RIGHT, backButton.getId());
-        //entryDetails.addRule(ALIGN_PARENT_LEFT);
-        entryDetails.addRule(ALIGN_PARENT_TOP);
-        entryDetails.addRule(ALIGN_PARENT_RIGHT);
-        entryDetails.setMargins(0, 25, 25, 0);
-        //entryDetails.addRule(RelativeLayout.RIGHT_OF, backButton.getId());
+
+        addEntryDetails.addRule(ALIGN_PARENT_RIGHT);
+        addEntryDetails.setMargins(0, 25, 25, 0);
+        addEntryDetails.addRule(RelativeLayout.RIGHT_OF, entry.getId());
 
         addEntry.setWidth(px);
 
-        /*addEntry.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //Add Checkable Entries
-            }
-        });*/
+        layout.addView(addEntry, addEntryDetails); //AddEntry Button*/
 
+        /*String date = getDateAsString();
+        TextView dateDisplay = new TextView(null);
+        dateDisplay.setText(date);
 
-        layout.addView(addEntry, entryDetails);
+        RelativeLayout.LayoutParams d_display = new RelativeLayout.LayoutParams(
+                RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+        d_display.addRule(RelativeLayout.ALIGN_PARENT_TOP);
+        d_display.addRule(RelativeLayout.BELOW, backButton.getId());
+        d_display.setMargins(25, 25, 0, 0);
+        layout.addView(dateDisplay, d_display);*/
 
         return layout;
     }
@@ -98,7 +174,7 @@ public class ToDoList extends AppCompatActivity {
     }
 
     private String getDateAsString(){
-        Calendar c = Calendar.getInstance();
+        final Calendar c = Calendar.getInstance();
         int year = c.get(Calendar.YEAR);
         int month = c.get(Calendar.MONTH);
         int dayOMth = c.get(Calendar.DAY_OF_MONTH);
@@ -120,7 +196,6 @@ public class ToDoList extends AppCompatActivity {
                 TypedValue.COMPLEX_UNIT_DIP, 50, r.getDisplayMetrics());
 
         layout = addButtons(layout, px);
-
 
         /*String date = getDateAsString();
         TextView dateDisplay = new TextView(null);
