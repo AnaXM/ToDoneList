@@ -57,7 +57,7 @@ public class NavigationScreen extends AppCompatActivity {
         l_buttonDetails.addRule(CENTER_HORIZONTAL);
         //l_buttonDetails.addRule(CENTER_VERTICAL);
         //l_buttonDetails.addRule(ALIGN_PARENT_TOP);
-        l_buttonDetails.setMargins(0,px,0,0);
+        l_buttonDetails.setMargins(0, px, 0, 0);
 
         listButton.setWidth(px);
         layout.addView(listButton, l_buttonDetails);
@@ -129,6 +129,8 @@ public class NavigationScreen extends AppCompatActivity {
         });
 
         setContentView(layout);
+        /*Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);*/
 
     }
 
